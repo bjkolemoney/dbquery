@@ -31,4 +31,4 @@
         name: "{{ db_name }}"
         owner: "{{ db_user }}"
     - name: import the database
-      shell: psql -h "{{ postgres_ip }}" -U postgres northwind < /home/ubuntu/northwind.sql
+      shell: psql -h "{{ postgres_ip }}" -U postgres northwind < /home/ubuntu/dbquery/northwind.sql
