@@ -1,0 +1,34 @@
+---
+- name: postgres tasks
+  hosts: psql
+  connection: local
+  become: true
+  vars_prompt:
+  - name: postgres_password
+    prompt: "Please share your preffered password"
+  - name: postgres_ip
+    prompt: "Share the IP address of the postgres container"
+  vars:
+    db_user: calibrator
+    db_name: northwind
+  tasks:
+    - name: Utility required
+      ansible.builtin.package:
+        name: python3-psycopg2
+        state: present
+    - name: Create database user
+      community.postgresql.postgresql_user:
+        state: present
+        name: "{{ db_user }}"
+        password: "{{ postgres_password }}"
+        login_host: "{{ postgres_ip }}"
+        login_user: postgres
+    - name: Create database 
+      community.postgresql.postgresql_db:
+        state: present
+        login_host: "{{ postgres_ip }}"
+        login_user: postgres
+        name: "{{ db_name }}"
+        owner: "{{ db_user }}"
+    - name: import the database
+      shell: psql -h "{{ postgres_ip }}" -U postgres northwind < /home/ubuntu/northwind.sql
